@@ -1,19 +1,6 @@
 import { EMPLOYEE_URL,USER_DETAIL } from '../api/api'; // Import the employee API URL
 import axios from "axios";
 
-
-// export const staticEmployees = [{ 
-//   id: 1,
-//   name: "Mananjay",
-//   email: "ghjk",
-//   password: "hjk",
-//   contact: "hjkl",
-//   region: "Asia",
-//   gender: "Male",
-//   status: "active", // Add status for active/inactive employees
-//   userRole:'Admin'
-// }];
-
 // Fetch all employees
 export const getEmployees = async () => {
   try {
@@ -61,21 +48,6 @@ export const createEmployee = async (employeeData) => {
 
     return await response.json(); // Return created employee data
 
-    // Simulate an API call delay (e.g., 1 second)
-    // await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // Simulate creating a new employee by adding to the static array
-    // const newEmployee = {
-    //   id: staticEmployees.length + 1, // Increment ID for new employee
-    //   ...employeeData, // Include the provided employee data
-    //   status: "active", // Set status as active by default
-    // };
-
-    // Add the new employee to the static array
-    // staticEmployees.push(newEmployee);
-
-    // Return the newly created employee
-    // return newEmployee;
   } catch (error) {
     console.error("Error creating employee:", error);
     throw error;
@@ -111,25 +83,6 @@ export const updateEmployeeStatus = async (employeeId, status) => {
 };
 
 
-// Edit an employee's details
-// export const editEmployee = async (employeeId, updatedData) => {
-//   try {
-//     // Simulate an API call delay (e.g., 1 second)
-//     await new Promise(resolve => setTimeout(resolve, 1000));
-
-//     // Find the employee by ID and update their details
-//     const employee = staticEmployees.find(emp => emp.id === employeeId);
-//     if (employee) {
-//       Object.assign(employee, updatedData); // Update the employee's details
-//     }
-
-//     return employee;
-//   } catch (error) {
-//     console.error("Error editing employee:", error);
-//     throw error;
-//   }
-// };
-
 // Delete an employee
 export const deleteEmployee = async (employeeId) => {
   console.log(employeeId);
@@ -146,18 +99,7 @@ export const deleteEmployee = async (employeeId) => {
     getEmployees();
     return await response.json(); // Return confirmation of deletion
 
-    // Simulate an API call delay (e.g., 1 second)
-    // await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // Find and remove the employee from the static array
-    // const index = staticEmployees.findIndex(emp => emp.id === employeeId);
-    // console.log(index)
-    // if (index !== -1) {
-    //   staticEmployees.splice(index, 1); // Remove the employee from the array
-    // }
-
-    // return { message: "Employee deleted successfully" };
-  } catch (error) {
+      } catch (error) {
     console.error("Error deleting employee:", error);
     throw error;
   }
