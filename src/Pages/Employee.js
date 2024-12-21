@@ -6,6 +6,7 @@ import {
   deleteEmployee,
 } from "../services/employeeService";
 
+
 const Employee = () => {
   const [employees, setEmployees] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -19,8 +20,7 @@ const Employee = () => {
     userRole: "",
     status: "active",
   });
-  const [regions] = useState(["Asia", "Europe", "Africa", "Americas", "Oceania"]);
-  const [selectedRegion, setSelectedRegion] = useState("All");
+ 
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [editingEmployee, setEditingEmployee] = useState(null);
 
@@ -57,7 +57,6 @@ const Employee = () => {
         email: "",
         password: "",
         contact: "",
-        region: "",
         gender: "",
         userRole: "",
         status: "active",
@@ -81,7 +80,6 @@ const Employee = () => {
         email: editingEmployee.email,
         password: editingEmployee.password, // Include password if necessary
         contact: editingEmployee.contact,
-        region: editingEmployee.region,
         gender: editingEmployee.gender,
         userRole: editingEmployee.userRole,
         status: "active", // Include status if needed
@@ -100,24 +98,26 @@ const Employee = () => {
   };
   
 
+
   const handleDeleteEmployee = async (employeeId) => {
     try {
-      await deleteEmployee(employeeId); // Delete employee
-      setEmployees(employees.filter((employee) => employee.id !== employeeId)); // Update state immediately
+      await deleteEmployee(employeeId); // Attempt to delete employee
+      setEmployees(employees.filter((employee) => employee.id !== employeeId)); // Update state
+      fetchEmployees(); 
     } catch (error) {
-      console.error("Error deleting employee:", error);
+      // Display the error message to the user
+      alert(error.message); // Use a modal, toast, or alert for better UI
     }
   };
+  
 
   // Filter employees based on selected region and status
   const filteredEmployees = employees.filter((employee) => {
-    const regionFilter =
-      selectedRegion === "All" || employee.region === selectedRegion;
     const statusFilter =
       selectedStatus === "All" ||
       (selectedStatus === "Active" && employee.status === "active") ||
       (selectedStatus === "Inactive" && employee.status === "inactive");
-    return regionFilter && statusFilter;
+    return statusFilter;
   });
 
   return (
@@ -125,20 +125,6 @@ const Employee = () => {
       <h1 className="text-2xl font-bold mb-4">Employees</h1>
 
       <div className="mb-4 flex items-center">
-        <label className="mr-2">Filter by Region:</label>
-        <select
-          value={selectedRegion}
-          onChange={(e) => setSelectedRegion(e.target.value)}
-          className="p-2 border border-gray-300 rounded-md mr-4"
-        >
-          <option value="All">All Regions</option>
-          {regions.map((region) => (
-            <option key={region} value={region}>
-              {region}
-            </option>
-          ))}
-        </select>
-
         <label className="mr-2">Filter by Status:</label>
         <select
           value={selectedStatus}
@@ -237,26 +223,6 @@ const Employee = () => {
                 </div>
               ))}
               <div className="mb-4">
-                <label htmlFor="region" className="block text-gray-700 mb-2">
-                  Region
-                </label>
-                <select
-                  id="region"
-                  name="region"
-                  value={
-                    editingEmployee ? editingEmployee.region : newEmployee.region
-                  }
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  required
-                >
-                  <option value="">Select Region</option>
-                  {regions.map((region) => (
-                    <option key={region} value={region}>
-                      {region}
-                    </option>
-                  ))}
-                </select>
               </div>
               <div className="mb-4">
                 <label htmlFor="gender" className="block text-gray-700 mb-2">

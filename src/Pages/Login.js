@@ -28,8 +28,6 @@ const Login = () => {
     }else{
         setError(responseMessage.message)
     }
-      // Navigate to dashboard after successful login
-      // navigate('/dashboard');
     } catch (err) {
       setError('Invalid email or password'); // Set error message
     }

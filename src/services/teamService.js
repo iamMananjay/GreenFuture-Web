@@ -67,4 +67,37 @@ export const fetchTeams = async () => {
       throw error;
     }
   };
+
+  // Update a team
+export const updateTeam = async (teamId, teamData) => {
+  try {
+    const response = await fetch(`${TEAM_DETAIL}/${teamId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(teamData),
+    });
+    if (!response.ok) throw new Error("Failed to update team");
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+// Delete a team
+export const deleteTeam = async (teamId) => {
+  try {
+    const response = await fetch(`${TEAM_DETAIL}/${teamId}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) throw new Error("Failed to delete team");
+    return true; // Return true if successful
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
   

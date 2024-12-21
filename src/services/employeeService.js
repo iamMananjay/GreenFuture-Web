@@ -1,4 +1,4 @@
-import { EMPLOYEE_URL,USER_DETAIL } from '../api/api'; // Import the employee API URL
+import { EMPLOYEE_URL,USER_DETAIL,REGION_URL } from '../api/api'; // Import the employee API URL
 import axios from "axios";
 
 // Fetch all employees
@@ -16,7 +16,6 @@ export const getEmployees = async () => {
   }
 };
 export const  getYourProfile=async(token)=>{
-  console.log(token);
   try{
       const response = await axios.get(USER_DETAIL, 
       {
@@ -30,7 +29,6 @@ export const  getYourProfile=async(token)=>{
 
 // Create a new employee
 export const createEmployee = async (employeeData) => {
-  console.log(`credentials: ${JSON.stringify(employeeData)}`);
 
   try {
     // Dynamic API call (uncomment when backend API is ready)
@@ -57,7 +55,6 @@ export const createEmployee = async (employeeData) => {
 // Update the status of an employee (active/inactive)
 export const updateEmployeeStatus = async (employeeId, status) => {
   try {
-    console.log("Updating status to:", employeeId);
 
     const response = await fetch(`${EMPLOYEE_URL}/${employeeId}`, {
       method: "PUT",
@@ -73,7 +70,6 @@ export const updateEmployeeStatus = async (employeeId, status) => {
     }
 
     const updatedEmployee = await response.json();
-    console.log("Employee status updated successfully:", updatedEmployee);
 
     return updatedEmployee; // Return the updated employee data
   } catch (error) {
@@ -83,24 +79,45 @@ export const updateEmployeeStatus = async (employeeId, status) => {
 };
 
 
-// Delete an employee
 export const deleteEmployee = async (employeeId) => {
-  console.log(employeeId);
   try {
-    // Dynamic API call (uncomment when backend API is ready)
     const response = await fetch(`${EMPLOYEE_URL}/${employeeId}`, {
       method: "DELETE",
     });
 
     if (!response.ok) {
-      throw new Error("Failed to delete employee");
+      const errorData = await response.json(); // Parse JSON response
+      throw new Error(errorData.message || "Failed to delete employee");
+    }
+       // If the response is 204, no content is expected
+    if (response.status === 204) {
+        return { success: true };
     }
 
     getEmployees();
-    return await response.json(); // Return confirmation of deletion
-
-      } catch (error) {
-    console.error("Error deleting employee:", error);
+    return await response.json();
+  } catch (error) {
+    console.error("Error deleting employee:", error.message);
     throw error;
   }
 };
+
+
+// Fetch branches by region
+export const getBranchesByRegion = async (region, token) => {
+  try {
+    const response = await axios.get(`${REGION_URL}/${region}`, {
+      headers: {
+        Authorization: `Bearer ${token}` // Include the token in the headers
+      }
+    });
+    return response.data; // Return branch data
+  } catch (error) {
+    console.error("Error fetching branches:", error);
+    throw error; // Throw error to be handled by the caller
+  }
+};
+
+
+
+

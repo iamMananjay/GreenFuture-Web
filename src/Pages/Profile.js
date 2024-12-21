@@ -46,7 +46,6 @@ const Profile = () => {
   const handleSave = () => {
     setUser(formData);
     setIsEditing(false);
-    // Here, you can add an API call to save the changes, e.g., update the user profile on the backend
   };
 
   const handleChange = (e) => {

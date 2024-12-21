@@ -2,11 +2,9 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 const Sidebar = () => {
-  // Get the user's role from localStorage (assuming it's stored there)
   const userRole = localStorage.getItem('role'); // Replace with your logic to get the role
 
   const handleLogout = () => {
-    // Logic to log out (e.g., clearing session or redirecting to login page)
     console.log("Logging out...");
     localStorage.removeItem('role'); // Remove the role from localStorage on logout
     window.location.href = '/'; // Redirect to the login page

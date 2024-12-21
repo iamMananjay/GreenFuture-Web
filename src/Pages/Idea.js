@@ -16,7 +16,6 @@ const Idea = () => {
   const [showForm, setShowForm] = useState(false);
   const [ideaTitle, setIdeaTitle] = useState('');
   const [ideaDescription, setIdeaDescription] = useState('');
-  // const [userEmail] = useState('employee@example.com');
   const [userVotes, setUserVotes] = useState({});
   const [editingIdea, setEditingIdea] = useState(null);
   const [userEmail, setUserEmail] = useState(null);

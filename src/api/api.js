@@ -10,6 +10,8 @@ export const EMPLOYEE_URL = `${BASE_URL}/api/employees`;
 export const IDEA_URL = `${BASE_URL}/api/ideas`;
 export const USER_DETAIL = `${BASE_URL}/auth/get-profile`;
 export const TEAM_DETAIL = `${BASE_URL}/api/teams`;
+export const REGION_URL = `${BASE_URL}/api/regions`;  
+
 
 // Utility function for making API requests
 export const apiRequest = async (url, options) => {
@@ -26,8 +28,6 @@ export const apiRequest = async (url, options) => {
     throw error;
   }
 };
-
-// api.js
 
 
 
