@@ -11,6 +11,8 @@ export const IDEA_URL = `${BASE_URL}/api/ideas`;
 export const USER_DETAIL = `${BASE_URL}/auth/get-profile`;
 export const TEAM_DETAIL = `${BASE_URL}/api/teams`;
 export const REGION_URL = `${BASE_URL}/api/regions`;  
+export const PROJECT_URL = `${BASE_URL}/api/projects`;  
+
 
 
 // Utility function for making API requests

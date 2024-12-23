@@ -4,7 +4,6 @@ import {EMPLOYEE_URL ,IDEA_URL,TEAM_DETAIL } from '../api/api'; // Import the lo
 export const fetchTeams = async () => {
     try {
       const response = await fetch(TEAM_DETAIL);
-      console.log(fetchTeams);
       if (!response.ok) throw new Error("Failed to fetch teams");
       return await response.json();
     } catch (error) {
