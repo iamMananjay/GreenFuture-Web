@@ -12,6 +12,8 @@ export const USER_DETAIL = `${BASE_URL}/auth/get-profile`;
 export const TEAM_DETAIL = `${BASE_URL}/api/teams`;
 export const REGION_URL = `${BASE_URL}/api/regions`;  
 export const PROJECT_URL = `${BASE_URL}/api/projects`;  
+export const INCENTIVE_URL = `${BASE_URL}/api/incentives`;  
+
 
 
 

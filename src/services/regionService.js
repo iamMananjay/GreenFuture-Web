@@ -11,7 +11,6 @@ import axios from "axios";
 export const getAllRegions = async () => {
   try {
     const response = await axios.get(REGION_URL);
-    console.log(response.data);
     return response.data; // Assuming the API returns data in the `data` field
   } catch (error) {
     console.error("Error fetching regions:", error);
@@ -25,7 +24,6 @@ export const getAllRegions = async () => {
  * @returns {Promise} Created region
  */
   export const createRegion = async (regionData) => {
-    console.log(regionData);
     try {
       const response = await fetch(REGION_URL, {
         method: "POST",

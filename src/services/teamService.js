@@ -28,7 +28,6 @@ export const fetchTeams = async () => {
       }
   
       const data = await response.json();
-  console.log(data);
       return data;
     } catch (error) {
       console.error('Error fetching ideas:', error);
@@ -50,7 +49,6 @@ export const fetchTeams = async () => {
   
   // Create a new team
   export const createTeam = async (teamData) => {
-    console.log(teamData);
     try {
       const response = await fetch(TEAM_DETAIL, {
         method: "POST",
