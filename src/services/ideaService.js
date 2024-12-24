@@ -1,4 +1,4 @@
-import { IDEA_URL,USER_DETAIL } from '../api/api';
+import { IDEA_URL } from '../api/api';
 
 
 

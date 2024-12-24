@@ -9,6 +9,7 @@ import Team from './Pages/Team';
 import Project from './Pages/Project';
 import Incentive from './Pages/Incentive';
 import Profile from './Pages/Profile';
+import Job from './Pages/Job';
 
 
 const App = () => {
@@ -19,6 +20,7 @@ const App = () => {
         <Route path="/dashboard/*" element={<Dashboard />}>
           <Route index element={<Idea />} /> {/* Default route */}
           <Route path="regions" element={<Regions />} />
+          <Route path="job" element={< Job/>} />
           <Route path="employee" element={<Employee />} />
           <Route path="idea" element={<Idea />} />
           <Route path="team" element={<Team />} />

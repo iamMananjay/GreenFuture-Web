@@ -29,6 +29,15 @@ const Sidebar = () => {
               </li>
               <li className="mb-4">
                 <NavLink 
+                  to="/dashboard/job" 
+                  className="block p-2 hover:bg-blue-600 rounded"
+                  activeClassName="bg-blue-600"
+                >
+                  Job Designations
+                </NavLink>
+              </li>
+              <li className="mb-4">
+                <NavLink 
                   to="/dashboard/employee" 
                   className="block p-2 hover:bg-blue-600 rounded"
                   activeClassName="bg-blue-600"

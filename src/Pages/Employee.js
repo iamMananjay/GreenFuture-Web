@@ -15,7 +15,6 @@ const Employee = () => {
     email: "",
     password: "",
     contact: "",
-    region: "",
     gender: "",
     userRole: "",
     status: "active",
@@ -152,7 +151,6 @@ const Employee = () => {
               <ul className="list-disc pl-6">
                 <li>Email: {employee.email}</li>
                 <li>Contact: {employee.contact}</li>
-                <li>Region: {employee.region}</li>
                 <li>Gender: {employee.gender}</li>
                 <li>Status: {employee.status}</li>
               </ul>
