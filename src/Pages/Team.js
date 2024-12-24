@@ -7,6 +7,7 @@ import {
   updateTeam,
   deleteTeam,
 } from "../services/teamService";
+import { FaVideo, FaComments } from "react-icons/fa"; // Importing icons
 
 const TeamForm = () => {
   const [teams, setTeams] = useState([]);
@@ -102,6 +103,17 @@ const TeamForm = () => {
     }
   };
 
+  // Handle Google Meet video call and chat site
+  const handleVideoClick = (teamName) => {
+    const meetUrl = `https://meet.google.com/new`; // Open Google Meet
+    window.open(meetUrl, "_blank");
+  };
+
+  const handleChatClick = (teamName) => {
+    const chatUrl = `https://tawk.to/`; // Example of a free chat site
+    window.open(chatUrl, "_blank");
+  };
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Teams</h1>
@@ -129,7 +141,7 @@ const TeamForm = () => {
                   Members:{" "}
                   {team.members.map((member) => member.name).join(", ")}
                 </p>
-                <div className="mt-2">
+                <div className="mt-2 flex space-x-4">
                   <button
                     onClick={() => handleEditClick(team)}
                     className="mr-2 bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600"
@@ -141,6 +153,20 @@ const TeamForm = () => {
                     className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600"
                   >
                     Delete
+                  </button>
+                  <button
+                    onClick={() => handleVideoClick(team.name)}
+                    className="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600"
+                  >
+                    <FaVideo className="inline mr-2" />
+                    Video Call
+                  </button>
+                  <button
+                    onClick={() => handleChatClick(team.name)}
+                    className="bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600"
+                  >
+                    <FaComments className="inline mr-2" />
+                    Chat
                   </button>
                 </div>
               </li>
