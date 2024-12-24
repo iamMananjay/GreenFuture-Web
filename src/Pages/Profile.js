@@ -6,7 +6,6 @@ const Profile = () => {
     name: '',
     email: '',
     role: '',
-    region: '',
     contact: '',
     gender: '',
     status: '',
@@ -26,7 +25,6 @@ const Profile = () => {
           name: response.users.name,
           email: response.users.email,
           role: response.users.userRole,
-          region: response.users.region,
           contact: response.users.contact,
           gender: response.users.gender,
           status: response.users.status,
@@ -101,20 +99,6 @@ const Profile = () => {
               />
             ) : (
               <p className="text-lg">{user.role}</p>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-semibold">Region</label>
-            {isEditing ? (
-              <input
-                type="text"
-                name="region"
-                value={formData.region}
-                onChange={handleChange}
-                className="mt-1 p-2 border border-gray-300 rounded"
-              />
-            ) : (
-              <p className="text-lg">{user.region}</p>
             )}
           </div>
           <div>

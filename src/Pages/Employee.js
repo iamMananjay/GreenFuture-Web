@@ -6,7 +6,9 @@ import {
   deleteEmployee,
 } from "../services/employeeService";
 
-
+import {
+  fetchAllJobs // Assuming you have a service to fetch job designations
+} from "../services/JobService";
 const Employee = () => {
   const [employees, setEmployees] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -18,14 +20,17 @@ const Employee = () => {
     gender: "",
     userRole: "",
     status: "active",
+    designationId: "", // New field to store the selected job designation
   });
- 
+
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [editingEmployee, setEditingEmployee] = useState(null);
+  const [jobDesignations, setJobDesignations] = useState([]); // State to store job designations
 
-  // Fetch employees on component mount
+  // Fetch employees and job designations on component mount
   useEffect(() => {
     fetchEmployees();
+    fetchJobDesignations(); // Fetch job designations
   }, []);
 
   const fetchEmployees = async () => {
@@ -34,6 +39,15 @@ const Employee = () => {
       setEmployees(data);
     } catch (error) {
       console.error("Error fetching employees:", error);
+    }
+  };
+
+  const fetchJobDesignations = async () => {
+    try {
+      const data = await fetchAllJobs(); // Fetch job designations
+      setJobDesignations(data);
+    } catch (error) {
+      console.error("Error fetching job designations:", error);
     }
   };
 
@@ -59,6 +73,7 @@ const Employee = () => {
         gender: "",
         userRole: "",
         status: "active",
+        designationId: "", // Reset designation field
       });
       fetchEmployees(); // Refresh employee list
     } catch (error) {
@@ -70,24 +85,23 @@ const Employee = () => {
     setEditingEmployee(employee); // Set employee data for editing
     setShowForm(true);
   };
+
   const handleUpdateEmployee = async (e) => {
     e.preventDefault();
     try {
-      // Prepare the data object with only the required fields
       const updatedEmployeeData = {
         name: editingEmployee.name,
         email: editingEmployee.email,
-        password: editingEmployee.password, // Include password if necessary
+        password: editingEmployee.password,
         contact: editingEmployee.contact,
         gender: editingEmployee.gender,
         userRole: editingEmployee.userRole,
-        status: "active", // Include status if needed
+        status: "active",
+        designation: editingEmployee.designationId ? { id: editingEmployee.designationId } : null,
       };
-  
-      // Call the service function with the formatted data
+
       await updateEmployeeStatus(editingEmployee.id, updatedEmployeeData);
-  
-      // Reset the state and refresh the employee list
+
       setEditingEmployee(null);
       setShowForm(false);
       fetchEmployees();
@@ -95,22 +109,17 @@ const Employee = () => {
       console.error("Error updating employee:", error);
     }
   };
-  
-
 
   const handleDeleteEmployee = async (employeeId) => {
     try {
-      await deleteEmployee(employeeId); // Attempt to delete employee
-      setEmployees(employees.filter((employee) => employee.id !== employeeId)); // Update state
-      fetchEmployees(); 
+      await deleteEmployee(employeeId);
+      setEmployees(employees.filter((employee) => employee.id !== employeeId));
+      fetchEmployees();
     } catch (error) {
-      // Display the error message to the user
-      alert(error.message); // Use a modal, toast, or alert for better UI
+      alert(error.message);
     }
   };
-  
 
-  // Filter employees based on selected region and status
   const filteredEmployees = employees.filter((employee) => {
     const statusFilter =
       selectedStatus === "All" ||
@@ -153,6 +162,12 @@ const Employee = () => {
                 <li>Contact: {employee.contact}</li>
                 <li>Gender: {employee.gender}</li>
                 <li>Status: {employee.status}</li>
+                <li>
+                  Designation:{" "}
+                  {employee.designation
+                    ? employee.designation.name
+                    : "Not Assigned"}
+                </li>
               </ul>
 
               <div className="flex justify-between mt-4">
@@ -193,9 +208,7 @@ const Employee = () => {
               {editingEmployee ? "Edit Employee" : "Add Employee"}
             </h2>
             <form
-              onSubmit={
-                editingEmployee ? handleUpdateEmployee : handleAddEmployee
-              }
+              onSubmit={editingEmployee ? handleUpdateEmployee : handleAddEmployee}
             >
               {["name", "email", "password", "contact"].map((field) => (
                 <div className="mb-4" key={field}>
@@ -209,11 +222,7 @@ const Employee = () => {
                     type={field === "password" ? "password" : "text"}
                     id={field}
                     name={field}
-                    value={
-                      editingEmployee
-                        ? editingEmployee[field]
-                        : newEmployee[field]
-                    }
+                    value={editingEmployee ? editingEmployee[field] : newEmployee[field]}
                     onChange={handleInputChange}
                     className="w-full p-2 border border-gray-300 rounded-md"
                     required
@@ -221,17 +230,13 @@ const Employee = () => {
                 </div>
               ))}
               <div className="mb-4">
-              </div>
-              <div className="mb-4">
                 <label htmlFor="gender" className="block text-gray-700 mb-2">
                   Gender
                 </label>
                 <select
                   id="gender"
                   name="gender"
-                  value={
-                    editingEmployee ? editingEmployee.gender : newEmployee.gender
-                  }
+                  value={editingEmployee ? editingEmployee.gender : newEmployee.gender}
                   onChange={handleInputChange}
                   className="w-full p-2 border border-gray-300 rounded-md"
                   required
@@ -249,24 +254,39 @@ const Employee = () => {
                 <select
                   id="userRole"
                   name="userRole"
-                  value={
-                    editingEmployee
-                      ? editingEmployee.userRole
-                      : newEmployee.userRole
-                  }
+                  value={editingEmployee ? editingEmployee.userRole : newEmployee.userRole}
                   onChange={handleInputChange}
                   className="w-full p-2 border border-gray-300 rounded-md"
                   required
                 >
                   <option value="">Select Role</option>
                   <option value="Innovation Manager">Innovation Manager</option>
-                  <option value="Regional IT Support">
-                    Regional IT Support
-                  </option>
+                  <option value="Regional IT Support">Regional IT Support</option>
                   <option value="Employee">Employee</option>
                 </select>
               </div>
-              <div className="flex justify-end space-x-2">
+              <div className="mb-4">
+                <label htmlFor="designationId" className="block text-gray-700 mb-2">
+                  Job Designation (Optional)
+                </label>
+                <select
+                  id="designationId"
+                  name="designationId"
+                  // value={editingEmployee ? editingEmployee.designation.id : newEmployee.designationId}
+                    value={editingEmployee ? editingEmployee.designation?.id || "" : newEmployee.designationId}
+
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                >
+                  <option value="">Select Designation</option>
+                  {jobDesignations.map((designation) => (
+                    <option key={designation.id} value={designation.id}>
+                      {designation.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex justify-between">
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
@@ -278,7 +298,7 @@ const Employee = () => {
                   type="submit"
                   className="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600"
                 >
-                  {editingEmployee ? "Update Employee" : "Add Employee"}
+                  {editingEmployee ? "Update" : "Add"} Employee
                 </button>
               </div>
             </form>
