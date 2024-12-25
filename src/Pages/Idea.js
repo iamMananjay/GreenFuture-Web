@@ -7,17 +7,20 @@ import {
   deleteIdea,
   voteOnIdea,
 } from '../services/ideaService';
-import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
+import { FaThumbsUp, FaThumbsDown, FaSpinner } from 'react-icons/fa'; // Importing FaSpinner for loading spinner
 
 const Idea = () => {
   const [ideas, setIdeas] = useState([]);
+  const [filteredIdeas, setFilteredIdeas] = useState([]); // State for storing filtered ideas
   const [showForm, setShowForm] = useState(false);
   const [ideaTitle, setIdeaTitle] = useState('');
   const [ideaDescription, setIdeaDescription] = useState('');
   const [userVotes, setUserVotes] = useState({}); // Track user's votes on each idea
   const [editingIdea, setEditingIdea] = useState(null);
   const [userEmail, setUserEmail] = useState(null);
+  const [loading, setLoading] = useState(false); // State to handle loading spinner
   const [error, setError] = useState(null);
+  const [showAll, setShowAll] = useState(false); // Toggle for showing all ideas
 
   useEffect(() => {
     // Fetch user details when the component mounts
@@ -51,6 +54,24 @@ const Idea = () => {
     } catch (error) {
       console.error('Error fetching ideas:', error);
     }
+  };
+
+  // Function to simulate AI filtering (based on vote count)
+  const filterTopIdeas = () => {
+    setLoading(true);
+    setTimeout(() => {
+      // Sort ideas based on vote count, and take the top 2
+      const sortedIdeas = [...ideas].sort((a, b) => b.voteCount - a.voteCount);
+      const topIdeas = sortedIdeas.slice(0, 2);
+      setFilteredIdeas(topIdeas); // Set filtered ideas
+      setLoading(false); // Stop loading after 5 seconds
+    }, 5000); // Simulate a 5-second delay
+  };
+
+  // Show all ideas after filtering
+  const showAllIdeas = () => {
+    setShowAll(true);
+    setFilteredIdeas([]);
   };
 
   const toggleFormVisibility = () => {
@@ -121,40 +142,83 @@ const Idea = () => {
   };
 
   return (
-    <div>
+    <div >
       <h3 className="text-2xl font-semibold mb-4">Ideas</h3>
-      {ideas.length === 0 ? (
-        <p className="text-red-500">No ideas found.</p>
-      ) : (
-        <div className="space-y-4 mb-6">
-          {ideas.map((idea) => (
-            <div
-              key={idea.id}
-              className="bg-white p-4 shadow-md rounded-lg flex justify-between items-center"
-            >
+      
+      {/* Button to trigger AI filtering */}
+      <button
+        onClick={filterTopIdeas}
+        className="bg-blue-500 text-white p-2 rounded-md mt-4"
+      >
+        Filter Top Ideas
+      </button>
+
+      {/* Show all ideas button */}
+      {filteredIdeas.length > 0 && !loading && (
+        <button
+          onClick={showAllIdeas}
+          className="bg-green-500 text-white p-2 rounded-md mt-4"
+        >
+          Show All Ideas
+        </button>
+      )}
+
+      {/* Loading animation (spinner) */}
+      {loading && (
+        <div className="flex justify-center items-center mt-4">
+          <div className="animate-spin text-blue-500 text-4xl">
+            <FaSpinner />
+          </div>
+          <div className="ml-2">
+            <p className="text-lg text-gray-500">AI Filtering in progress...</p>
+            <p className="font-bold text-blue-600 animate-pulse">Magic is happening!</p>
+          </div>
+        </div>
+      )}
+
+      {/* Display AI label during filtering */}
+      {loading && (
+        <div className="text-center text-xl font-bold text-gray-500 mt-4">
+          <p className="text-2xl animate-pulse">AI is applying a magical filter...</p>
+        </div>
+      )}
+
+      {/* Display filtered ideas */}
+      {filteredIdeas.length > 0 && !loading && (
+        <div className="space-y-4 mb-6 mt-4">
+          {filteredIdeas.map((idea) => (
+            <div key={idea.id} className="bg-white p-4 shadow-md rounded-lg flex justify-between items-center">
               <div>
                 <h4 className="text-xl font-bold">{idea.title}</h4>
                 <p>{idea.description}</p>
-                <p>Status: {idea.status}</p>
                 <p>Votes: {idea.voteCount}</p>
-                <p>
-                  Submission Date:{' '}
-                  {new Date(idea.submissionDate).toLocaleString()}
-                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Display all ideas initially */}
+      {(showAll || filteredIdeas.length === 0) && !loading && (
+        <div className="space-y-4 mb-6 mt-4">
+          {ideas.map((idea) => (
+            <div key={idea.id} className="bg-white p-4 shadow-md rounded-lg flex justify-between items-center">
+              <div>
+                <h4 className="text-xl font-bold">{idea.title}</h4>
+                <p>{idea.description}</p>
+                <p>Votes: {idea.voteCount}</p>
+                <p>Posted By: {idea.submittedBy}</p>
               </div>
               <div className="flex items-center space-x-2">
-              
                 {idea.submittedBy !== userEmail && (
                   <>      
                     {idea.votes.some(vote => vote.userEmail === userEmail) ? (
-                      // If the user has voted, show thumbs-down
                       <FaThumbsDown
                         className="text-red-500 cursor-pointer"
                         onClick={() => handleVote(idea.id, 'remove')}
                         title="You have already voted"
                       />
                     ) : (
-                      // If the user has not voted, show thumbs-up
                       <FaThumbsUp
                         className="text-green-500 cursor-pointer"
                         onClick={() => handleVote(idea.id, 'add')}
@@ -184,6 +248,8 @@ const Idea = () => {
           ))}
         </div>
       )}
+
+      {/* Idea submission form */}
       {showForm && (
         <form
           onSubmit={handleFormSubmit}
@@ -227,6 +293,7 @@ const Idea = () => {
           </button>
         </form>
       )}
+
       {!showForm && (
         <button
           onClick={toggleFormVisibility}
