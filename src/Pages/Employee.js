@@ -174,14 +174,14 @@ const Employee = () => {
                 <div className="flex space-x-2">
                   <button
                     onClick={() => handleEditEmployee(employee)}
-                    className="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600"
-                  >
+                    className="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 mr-2"
+                    >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDeleteEmployee(employee.id)}
                     className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600"
-                  >
+                    >
                     Delete
                   </button>
                 </div>
@@ -272,7 +272,6 @@ const Employee = () => {
                 <select
                   id="designationId"
                   name="designationId"
-                  // value={editingEmployee ? editingEmployee.designation.id : newEmployee.designationId}
                     value={editingEmployee ? editingEmployee.designation?.id || "" : newEmployee.designationId}
 
                   onChange={handleInputChange}

@@ -150,7 +150,7 @@ const Idea = () => {
         onClick={filterTopIdeas}
         className="bg-blue-500 text-white p-2 rounded-md mt-4"
       >
-        Filter Top Ideas
+        Filter Top Ideas (AI)
       </button>
 
       {/* Show all ideas button */}

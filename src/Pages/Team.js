@@ -8,6 +8,8 @@ import {
   deleteTeam,
 } from "../services/teamService";
 import { FaVideo, FaComments } from "react-icons/fa"; // Importing icons
+import { getYourProfile } from "../services/employeeService"; // Import the profile service
+
 
 const TeamForm = () => {
   const [teams, setTeams] = useState([]);
@@ -19,10 +21,18 @@ const TeamForm = () => {
   const [showForm, setShowForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editTeamId, setEditTeamId] = useState(null);
+  const [loggedInUser, setLoggedInUser] = useState(null);
+
 
   useEffect(() => {
+    
     const fetchData = async () => {
       try {
+         // Fetch logged-in user's profile
+         const token = localStorage.getItem("token"); // Assume token is stored in localStorage
+         const userProfile = await getYourProfile(token);
+         console.log(userProfile.users)
+         setLoggedInUser(userProfile.users);
         const teamData = await fetchTeams();
         setTeams(teamData);
 
@@ -117,78 +127,88 @@ const TeamForm = () => {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Teams</h1>
-
       <div
-        className="mb-6 p-4 rounded-lg shadow-md"
-        style={{
-          backgroundColor: "#f0f8ff",
-          border: "1px solid #d1e7f3",
-        }}
-      >
-        <h2 className="text-xl font-semibold mb-3">Existing Teams</h2>
-        {teams.length > 0 ? (
-          <ul className="list-disc pl-5 m-5 space-y-4">
-            {teams.map((team, index) => (
-              <li
-                key={team.id}
-                className={`mb-2 p-4 rounded-lg ${
-                  index % 2 === 0 ? "bg-blue-100" : "bg-green-100"
-                }`}
-              >
-                <strong>{team.name}</strong>
-                <p>Idea: {team.idea.title}</p>
-                <p>
-                  Members:{" "}
-                  {team.members.map((member) => member.name).join(", ")}
-                </p>
-                <div className="mt-2 flex space-x-4">
-                  <button
-                    onClick={() => handleEditClick(team)}
-                    className="mr-2 bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600"
+          className="mb-6 p-4 rounded-lg shadow-md"
+          style={{
+            backgroundColor: "#f0f8ff",
+            border: "1px solid #d1e7f3",
+          }}
+        >
+          <h2 className="text-xl font-semibold mb-3">Existing Teams</h2>
+          {teams.length > 0 ? (
+            <ul className="list-disc pl-5 m-5 space-y-4">
+              {teams
+                .filter((team) =>
+                  team.members.some((member) => member.name === loggedInUser.name)
+                )
+                .map((team, index) => (
+                  <li
+                    key={team.id}
+                    className={`mb-2 p-4 rounded-lg ${
+                      index % 2 === 0 ? "bg-blue-100" : "bg-green-100"
+                    }`}
                   >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteClick(team.id)}
-                    className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600"
-                  >
-                    Delete
-                  </button>
-                  <button
-                    onClick={() => handleVideoClick(team.name)}
-                    className="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600"
-                  >
-                    <FaVideo className="inline mr-2" />
-                    Video Call
-                  </button>
-                  <button
-                    onClick={() => handleChatClick(team.name)}
-                    className="bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600"
-                  >
-                    <FaComments className="inline mr-2" />
-                    Chat
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No teams available.</p>
-        )}
-      </div>
+                    <strong>{team.name}</strong>
+                    <p>Idea: {team.idea.title}</p>
+                    <p>
+                      Members:{" "}
+                      {team.members.map((member) => member.name).join(", ")}
+                    </p>
+                    <div className="mt-2 flex space-x-4">
+                      <button
+                        onClick={() => handleEditClick(team)}
+                        className="mr-2 bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(team.id)}
+                        className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600"
+                      >
+                        Delete
+                      </button>
+                      <button
+                        onClick={() => handleVideoClick(team.name)}
+                        className="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600"
+                      >
+                        <FaVideo className="inline mr-2" />
+                        Video Call
+                      </button>
+                      <button
+                        onClick={() => handleChatClick(team.name)}
+                        className="bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600"
+                      >
+                        <FaComments className="inline mr-2" />
+                        Chat
+                      </button>
+                    </div>
+                  </li>
+                ))}
+            </ul>
+          ) : (
+            <p>No teams available.</p>
+          )}
+</div>
 
-      <button
-        onClick={() => {
-          setShowForm(true);
-          setIsEditing(false);
-          setNewTeamName("");
-          setSelectedIdea("");
-          setSelectedMembers([]);
-        }}
-        className="mt-4 bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600"
-      >
-        Add Team
-      </button>
+
+    
+      {loggedInUser && loggedInUser.userRole !== "Employee" ? (
+          <button
+            onClick={() => {
+              setShowForm(true);
+              setIsEditing(false);
+              setNewTeamName("");
+              setSelectedIdea("");
+              setSelectedMembers([]);
+            }}
+            className="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 mr-2"
+>
+            Add Team
+          </button>
+        ) : (
+          ""
+        )}
+
 
       {showForm && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
