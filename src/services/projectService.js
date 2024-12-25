@@ -14,7 +14,6 @@ export const getProjects = async () => {
 
 // Add a new project
 export const addProject = async (project) => {
-  console.log(project)
   try {
     const response = await axios.post(PROJECT_URL, project);  // Sending project data
     return response.data;

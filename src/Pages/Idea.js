@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { getYourProfile } from "../services/employeeService"; // Assuming you have this service to get employee data
-
 import {
   fetchIdeas,
   submitIdea,
   updateIdea,
   deleteIdea,
   voteOnIdea,
-  fetchUserDet
 } from '../services/ideaService';
 import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
 
@@ -16,7 +14,7 @@ const Idea = () => {
   const [showForm, setShowForm] = useState(false);
   const [ideaTitle, setIdeaTitle] = useState('');
   const [ideaDescription, setIdeaDescription] = useState('');
-  const [userVotes, setUserVotes] = useState({});
+  const [userVotes, setUserVotes] = useState({}); // Track user's votes on each idea
   const [editingIdea, setEditingIdea] = useState(null);
   const [userEmail, setUserEmail] = useState(null);
   const [error, setError] = useState(null);
@@ -24,25 +22,32 @@ const Idea = () => {
   useEffect(() => {
     // Fetch user details when the component mounts
     const fetchUserData = async () => {
-          try {
-            const token = localStorage.getItem('token'); // Retrieve the token from localStorage
-            const response = await getYourProfile(token);
-                setUserEmail(response.users.email);
-            
-          } catch (error) {
-            console.error("Error fetching user data:", error);
-          }
-        };
-        fetchUserData();
-
+      try {
+        const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+        const response = await getYourProfile(token);
+        setUserEmail(response.users.email);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+    fetchUserData();
     fetchIdeasData();
   }, []);
-    
 
   const fetchIdeasData = async () => {
     try {
       const data = await fetchIdeas();
       setIdeas(data);
+      
+      // Track user votes on ideas
+      const userVotesData = {};
+      data.forEach((idea) => {
+        if (idea.votes && idea.votes.some(vote => vote.userEmail === userEmail)) {
+          const userVote = idea.votes.find(vote => vote.userEmail === userEmail);
+          userVotesData[idea.id] = userVote.voteType;
+        }
+      });
+      setUserVotes(userVotesData);
     } catch (error) {
       console.error('Error fetching ideas:', error);
     }
@@ -62,7 +67,6 @@ const Idea = () => {
   };
 
   const handleFormSubmit = async (e) => {
-    
     e.preventDefault();
     const newIdea = {
       title: ideaTitle,
@@ -107,11 +111,9 @@ const Idea = () => {
 
   const handleVote = async (ideaId, voteType) => {
     try {
+      // Perform the vote operation (add or remove)
       await voteOnIdea(ideaId, userEmail, voteType);
-      setUserVotes((prevVotes) => ({
-        ...prevVotes,
-        [ideaId]: voteType === 'like',
-      }));
+      // Fetch the updated list of ideas
       fetchIdeasData();
     } catch (error) {
       console.error('Error voting on idea:', error);
@@ -141,21 +143,27 @@ const Idea = () => {
                 </p>
               </div>
               <div className="flex items-center space-x-2">
-                {idea.submittedBy !== userEmail ? (
-                  userVotes[idea.id] ? (
-                    <FaThumbsDown
-                      className="text-red-500 cursor-pointer"
-                      onClick={() => handleVote(idea.id, 'unlike')}
-                      title="Remove your vote"
-                    />
-                  ) : (
-                    <FaThumbsUp
-                      className="text-green-500 cursor-pointer"
-                      onClick={() => handleVote(idea.id, 'like')}
-                      title="Vote for this idea"
-                    />
-                  )
-                ) : (
+              
+                {idea.submittedBy !== userEmail && (
+                  <>      
+                    {idea.votes.some(vote => vote.userEmail === userEmail) ? (
+                      // If the user has voted, show thumbs-down
+                      <FaThumbsDown
+                        className="text-red-500 cursor-pointer"
+                        onClick={() => handleVote(idea.id, 'remove')}
+                        title="You have already voted"
+                      />
+                    ) : (
+                      // If the user has not voted, show thumbs-up
+                      <FaThumbsUp
+                        className="text-green-500 cursor-pointer"
+                        onClick={() => handleVote(idea.id, 'add')}
+                        title="Vote for this idea"
+                      />
+                    )}
+                 </>
+                )}
+                {idea.submittedBy === userEmail && (
                   <>
                     <button
                       onClick={() => handleEdit(idea)}
@@ -185,10 +193,7 @@ const Idea = () => {
             {editingIdea ? 'Update Idea' : 'Submit New Idea'}
           </h4>
           <div className="mb-4">
-            <label
-              htmlFor="title"
-              className="block text-gray-700 mb-2"
-            >
+            <label htmlFor="title" className="block text-gray-700 mb-2">
               Idea Title
             </label>
             <input
@@ -202,10 +207,7 @@ const Idea = () => {
             />
           </div>
           <div className="mb-4">
-            <label
-              htmlFor="description"
-              className="block text-gray-700 mb-2"
-            >
+            <label htmlFor="description" className="block text-gray-700 mb-2">
               Idea Description
             </label>
             <textarea
