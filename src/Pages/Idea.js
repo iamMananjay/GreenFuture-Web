@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getYourProfile } from "../services/employeeService"; // Assuming you have this service to get employee data
+import { getYourProfile } from "../services/employeeService";
 import {
   fetchIdeas,
   submitIdea,
@@ -7,26 +7,25 @@ import {
   deleteIdea,
   voteOnIdea,
 } from '../services/ideaService';
-import { FaThumbsUp, FaThumbsDown, FaSpinner } from 'react-icons/fa'; // Importing FaSpinner for loading spinner
+import { FaThumbsUp, FaThumbsDown, FaSpinner } from 'react-icons/fa';
 
 const Idea = () => {
   const [ideas, setIdeas] = useState([]);
-  const [filteredIdeas, setFilteredIdeas] = useState([]); // State for storing filtered ideas
+  const [filteredIdeas, setFilteredIdeas] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [ideaTitle, setIdeaTitle] = useState('');
   const [ideaDescription, setIdeaDescription] = useState('');
-  const [userVotes, setUserVotes] = useState({}); // Track user's votes on each idea
+  const [userVotes, setUserVotes] = useState({});
   const [editingIdea, setEditingIdea] = useState(null);
   const [userEmail, setUserEmail] = useState(null);
-  const [loading, setLoading] = useState(false); // State to handle loading spinner
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [showAll, setShowAll] = useState(false); // Toggle for showing all ideas
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
-    // Fetch user details when the component mounts
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+        const token = localStorage.getItem('token');
         const response = await getYourProfile(token);
         setUserEmail(response.users.email);
       } catch (error) {
@@ -41,8 +40,7 @@ const Idea = () => {
     try {
       const data = await fetchIdeas();
       setIdeas(data);
-      
-      // Track user votes on ideas
+
       const userVotesData = {};
       data.forEach((idea) => {
         if (idea.votes && idea.votes.some(vote => vote.userEmail === userEmail)) {
@@ -56,19 +54,16 @@ const Idea = () => {
     }
   };
 
-  // Function to simulate AI filtering (based on vote count)
   const filterTopIdeas = () => {
     setLoading(true);
     setTimeout(() => {
-      // Sort ideas based on vote count, and take the top 2
       const sortedIdeas = [...ideas].sort((a, b) => b.voteCount - a.voteCount);
       const topIdeas = sortedIdeas.slice(0, 2);
-      setFilteredIdeas(topIdeas); // Set filtered ideas
-      setLoading(false); // Stop loading after 5 seconds
-    }, 5000); // Simulate a 5-second delay
+      setFilteredIdeas(topIdeas);
+      setLoading(false);
+    }, 5000);
   };
 
-  // Show all ideas after filtering
   const showAllIdeas = () => {
     setShowAll(true);
     setFilteredIdeas([]);
@@ -132,9 +127,7 @@ const Idea = () => {
 
   const handleVote = async (ideaId, voteType) => {
     try {
-      // Perform the vote operation (add or remove)
       await voteOnIdea(ideaId, userEmail, voteType);
-      // Fetch the updated list of ideas
       fetchIdeasData();
     } catch (error) {
       console.error('Error voting on idea:', error);
@@ -142,28 +135,25 @@ const Idea = () => {
   };
 
   return (
-    <div >
+    <div className="p-6">
       <h3 className="text-2xl font-semibold mb-4">Ideas</h3>
-      
-      {/* Button to trigger AI filtering */}
+
       <button
         onClick={filterTopIdeas}
-        className="bg-blue-500 text-white p-2 rounded-md mt-4"
+        className="bg-green-600 text-white p-2 rounded-md mt-4 hover:bg-green-700 transition"
       >
         Filter Top Ideas (AI)
       </button>
 
-      {/* Show all ideas button */}
       {filteredIdeas.length > 0 && !loading && (
         <button
           onClick={showAllIdeas}
-          className="bg-green-500 text-white p-2 rounded-md mt-4"
+          className="bg-blue-600 text-white p-2 rounded-md mt-4 hover:bg-blue-700 transition"
         >
           Show All Ideas
         </button>
       )}
 
-      {/* Loading animation (spinner) */}
       {loading && (
         <div className="flex justify-center items-center mt-4">
           <div className="animate-spin text-blue-500 text-4xl">
@@ -176,18 +166,10 @@ const Idea = () => {
         </div>
       )}
 
-      {/* Display AI label during filtering */}
-      {loading && (
-        <div className="text-center text-xl font-bold text-gray-500 mt-4">
-          <p className="text-2xl animate-pulse">AI is applying a magical filter...</p>
-        </div>
-      )}
-
-      {/* Display filtered ideas */}
       {filteredIdeas.length > 0 && !loading && (
         <div className="space-y-4 mb-6 mt-4">
           {filteredIdeas.map((idea) => (
-            <div key={idea.id} className="bg-white p-4 shadow-md rounded-lg flex justify-between items-center">
+            <div key={idea.id} className="bg-white p-4 shadow-lg rounded-lg flex justify-between items-center transition-transform transform hover:scale-105">
               <div>
                 <h4 className="text-xl font-bold">{idea.title}</h4>
                 <p>{idea.description}</p>
@@ -198,11 +180,10 @@ const Idea = () => {
         </div>
       )}
 
-      {/* Display all ideas initially */}
       {(showAll || filteredIdeas.length === 0) && !loading && (
         <div className="space-y-4 mb-6 mt-4">
           {ideas.map((idea) => (
-            <div key={idea.id} className="bg-white p-4 shadow-md rounded-lg flex justify-between items-center">
+            <div key={idea.id} className="bg-white p-4 shadow-lg rounded-lg flex justify-between items-center transition-transform transform hover:scale-105">
               <div>
                 <h4 className="text-xl font-bold">{idea.title}</h4>
                 <p>{idea.description}</p>
@@ -211,7 +192,7 @@ const Idea = () => {
               </div>
               <div className="flex items-center space-x-2">
                 {idea.submittedBy !== userEmail && (
-                  <>      
+                  <>
                     {idea.votes.some(vote => vote.userEmail === userEmail) ? (
                       <FaThumbsDown
                         className="text-red-500 cursor-pointer"
@@ -225,19 +206,19 @@ const Idea = () => {
                         title="Vote for this idea"
                       />
                     )}
-                 </>
+                  </>
                 )}
                 {idea.submittedBy === userEmail && (
                   <>
                     <button
                       onClick={() => handleEdit(idea)}
-                      className="text-blue-500"
+                      className="text-blue-500 hover:underline"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(idea.id)}
-                      className="text-red-500"
+                      className="text-red-500 hover:underline"
                     >
                       Delete
                     </button>
@@ -249,11 +230,10 @@ const Idea = () => {
         </div>
       )}
 
-      {/* Idea submission form */}
       {showForm && (
         <form
           onSubmit={handleFormSubmit}
-          className="bg-white p-6 shadow-md rounded-lg"
+          className="bg-white p-6 shadow-lg rounded-lg mt-6"
         >
           <h4 className="text-xl font-semibold mb-4">
             {editingIdea ? 'Update Idea' : 'Submit New Idea'}
@@ -287,7 +267,7 @@ const Idea = () => {
           </div>
           <button
             type="submit"
-            className="bg-blue-500 text-white p-2 rounded-md"
+            className="bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 transition"
           >
             {editingIdea ? 'Update Idea' : 'Submit Idea'}
           </button>
@@ -297,7 +277,7 @@ const Idea = () => {
       {!showForm && (
         <button
           onClick={toggleFormVisibility}
-          className="bg-green-500 text-white p-2 rounded-md mt-4"
+          className="bg-green-600 text-white p-2 rounded-md mt-4 hover:bg-green-700 transition"
         >
           Submit New Idea
         </button>
@@ -306,4 +286,4 @@ const Idea = () => {
   );
 };
 
-export default Idea;
+export default Idea ;

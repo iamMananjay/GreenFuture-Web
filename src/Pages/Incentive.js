@@ -1,29 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { getAllIncentives, createIncentive, updateIncentive, deleteIncentive } from "../services/IncentiveService"; // Import individual functions
-import { fetchTeams } from "../services/teamService"; // Import the fetchTeams function
+import { getAllIncentives, createIncentive, updateIncentive, deleteIncentive } from "../services/IncentiveService"; 
+import { fetchTeams } from "../services/teamService"; 
 
 const Incentive = () => {
   const [incentives, setIncentives] = useState([]);
   const [teams, setTeams] = useState([]);
-  const [editMode, setEditMode] = useState(false); // Track edit mode
+  const [editMode, setEditMode] = useState(false); 
 
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [newIncentive, setNewIncentive] = useState({
-    type: "Bonus", // Default incentive type
+    type: "Bonus", 
     amount: "",
-    teamId: "", // Assuming this is the team ID for the incentive
+    teamId: "", 
   });
-  const [selectedIncentive, setSelectedIncentive] = useState(null); // For updating an incentive
+  const [selectedIncentive, setSelectedIncentive] = useState(null); 
 
-  // Fetch incentives and teams on component mount
   useEffect(() => {
     const fetchIncentivesAndTeams = async () => {
       try {
-        // First fetch incentives
         const incentivesData = await getAllIncentives();
         setIncentives(incentivesData);
-
-        // Fetch teams only if it's not already done
         if (teams.length === 0) {
           const teamsData = await fetchTeams();
           setTeams(teamsData);
@@ -32,9 +28,8 @@ const Incentive = () => {
         console.error("Error fetching data:", error);
       }
     };
-
     fetchIncentivesAndTeams();
-  }, [teams.length]); // Dependency array ensures teams are fetched only once
+  }, [teams.length]); 
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -43,36 +38,23 @@ const Incentive = () => {
 
   const handleAddIncentive = async () => {
     try {
+      const incentiveData = {
+        type: newIncentive.type,
+        team: { id: newIncentive.teamId }, 
+        amount: newIncentive.amount,
+      };
+
       if (editMode) {
-        // Update existing incentive
-        const updatedIncentive = {
-          type: newIncentive.type,
-          team: { id: newIncentive.teamId }, // Pass team ID correctly
-          amount: newIncentive.amount,
-        };
-
-        // Call the updateIncentive function to update the incentive
-        await updateIncentive(selectedIncentive.id, updatedIncentive); // Use the updateIncentive function
-
+        await updateIncentive(selectedIncentive.id, incentiveData);
       } else {
-        // Add new incentive
-        const newIncentiveData = {
-          type: newIncentive.type,
-          team: { id: newIncentive.teamId }, // Pass team ID correctly
-          amount: newIncentive.amount,
-        };
-
-        // Call the createIncentive function to create a new incentive
-        await createIncentive(newIncentiveData);
+        await createIncentive(incentiveData);
       }
 
-      // Fetch updated incentives after adding or updating
       const updatedIncentives = await getAllIncentives();
       setIncentives(updatedIncentives);
 
-      // Reset form
       setNewIncentive({
-        type: "Bonus", // Default incentive type
+        type: "Bonus", 
         amount: "",
         teamId: "",
       });
@@ -86,99 +68,89 @@ const Incentive = () => {
   };
 
   const handleEditIncentive = (incentive) => {
-    // Set selectedIncentive for editing
     setSelectedIncentive(incentive);
     setNewIncentive({
       type: incentive.type,
       amount: incentive.amount,
-      teamId: incentive.team ? incentive.team.id : "", // Ensure teamId is set correctly
+      teamId: incentive.team ? incentive.team.id : "",
     });
-    setEditMode(true); // Set edit mode
+    setEditMode(true); 
     setIsFormVisible(true);
   };
 
   const handleDeleteIncentive = async (id) => {
     try {
-      await deleteIncentive(id); // Using the individual function
+      await deleteIncentive(id); 
       setIncentives(incentives.filter((incentive) => incentive.id !== id));
     } catch (error) {
       console.error("Error deleting incentive:", error);
     }
   };
 
-  const fetchTeamsList = async () => {
-    try {
-      const teamResponse = await fetchTeams(); // Ensure fetchTeams() is defined and imported
-      setTeams(teamResponse);
-    } catch (error) {
-      console.error("Error fetching teams:", error);
-    }
-  };
-
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Incentives</h1>
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
-        onClick={() => {
-          setIsFormVisible(!isFormVisible);
-          if (!isFormVisible) {
-            // Fetch teams and ideas when the form opens
-            if (teams.length === 0) {
-              fetchTeamsList();
-            }
-            setEditMode(false); // Reset edit mode
-          }
-        }}
-      >
-        {isFormVisible ? "Close Form" : "Add New Incentive"}
-      </button>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Header */}
+      <h1 className="text-3xl font-semibold mb-6 text-center text-indigo-800">Incentive Management</h1>
+      
+      {/* Add New Incentive Button */}
+      <div className="mb-6">
+        <button
+          className="bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-indigo-700 transition-all"
+          onClick={() => {
+            setIsFormVisible(!isFormVisible);
+            setEditMode(false); 
+          }}
+        >
+          {isFormVisible ? "Close Form" : "Add New Incentive"}
+        </button>
+      </div>
 
+      {/* Incentive Form */}
       {isFormVisible && (
-        <div className="bg-gray-100 p-4 rounded shadow-md mb-6">
-          <h2 className="text-xl font-bold mb-4">
+        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+          <h2 className="text-xl font-semibold mb-6 text-center text-indigo-700">
             {selectedIncentive ? "Edit Incentive" : "Add New Incentive"}
           </h2>
           <div className="mb-4">
-            <label className="block mb-2 font-semibold">Incentive Type</label>
+            <label className="block mb-2 font-medium text-gray-700">Incentive Type</label>
             <select
               name="type"
               value={newIncentive.type}
               onChange={handleInputChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="Bonus">Bonus</option>
               <option value="Reward">Reward</option>
             </select>
           </div>
           <div className="mb-4">
-            <label className="block mb-2 font-semibold">Amount (£)</label>
+            <label className="block mb-2 font-medium text-gray-700">Amount (£)</label>
             <input
               type="number"
               name="amount"
               value={newIncentive.amount}
               onChange={handleInputChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
           <div className="mb-4">
-            <label className="block mb-2 font-semibold">Team</label>
+            <label className="block mb-2 font-medium text-gray-700">Team</label>
             <select
               name="teamId"
               value={newIncentive.teamId}
               onChange={handleInputChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="">Select Team</option>
-              {teams.map((team, index) => (
-                <option key={index} value={team.id}>
+              {teams.map((team) => (
+                <option key={team.id} value={team.id}>
                   {team.name}
                 </option>
               ))}
             </select>
           </div>
           <button
-            className="bg-green-500 text-white px-4 py-2 rounded"
+            className="bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-indigo-700 transition-all w-full"
             onClick={handleAddIncentive}
           >
             {selectedIncentive ? "Update Incentive" : "Add Incentive"}
@@ -186,43 +158,49 @@ const Incentive = () => {
         </div>
       )}
 
-      <table className="w-full border-collapse border border-gray-300">
-        <thead>
-          <tr>
-            <th className="border border-gray-300 p-2">ID</th>
-            <th className="border border-gray-300 p-2">Incentive Type</th>
-            <th className="border border-gray-300 p-2">Team</th>
-            <th className="border border-gray-300 p-2">Amount (£)</th>
-            <th className="border border-gray-300 p-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {incentives.map((incentive) => (
-            <tr key={incentive.id}>
-              <td className="border border-gray-300 p-2">{incentive.id}</td>
-              <td className="border border-gray-300 p-2">{incentive.type}</td>
-              <td className="border border-gray-300 p-2">
-                {incentive.team ? incentive.team.name : "No Team"}
-              </td>
-              <td className="border border-gray-300 p-2">{`£${incentive.amount}`}</td>
-              <td className="border border-gray-300 p-2">
-                <button
-                  className="bg-yellow-500 text-white px-4 py-2 rounded mr-2"
-                  onClick={() => handleEditIncentive(incentive)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="bg-red-500 text-white px-4 py-2 rounded"
-                  onClick={() => handleDeleteIncentive(incentive.id)}
-                >
-                  Delete
-                </button>
-              </td>
+      {/* Incentives Table */}
+      <div className="overflow-x-auto bg-white p-4 rounded-lg shadow-md">
+        <table className="w-full table-auto border-collapse border border-gray-300">
+          <thead className="bg-blue-500 text-white">
+            <tr>
+              <th className="border border-gray-300 p-3 text-left">ID</th>
+              <th className="border border-gray-300 p-3 text-left">Incentive Type</th>
+              <th className="border border-gray-300 p-3 text-left">Team</th>
+              <th className="border border-gray-300 p-3 text-left">Amount (£)</th>
+              <th className="border border-gray-300 p-3 text-left">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {incentives.map((incentive, index) => (
+              <tr
+                key={incentive.id}
+                className={`${
+                  index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                } hover:bg-gray-100 transition-all`}
+              >
+                <td className="border border-gray-300 p-3">{incentive.id}</td>
+                <td className="border border-gray-300 p-3">{incentive.type}</td>
+                <td className="border border-gray-300 p-3">{incentive.team ? incentive.team.name : "No Team"}</td>
+                <td className="border border-gray-300 p-3">{`£${incentive.amount}`}</td>
+                <td className="border border-gray-300 p-3 flex space-x-2">
+                  <button
+                    className="bg-yellow-500 text-white px-4 py-2 rounded-full hover:bg-yellow-600"
+                    onClick={() => handleEditIncentive(incentive)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600"
+                    onClick={() => handleDeleteIncentive(incentive.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

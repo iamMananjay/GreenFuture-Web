@@ -86,51 +86,56 @@ const RegionComponent = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Regions</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-4">Regions</h1>
       {regions.length > 0 ? (
-        <ul className="list-disc pl-5 m-5 space-y-4">
+        <ul className="list-none pl-5 m-5 space-y-4">
           {regions.map((region, index) => (
             <li
               key={region.id}
-              className={`mb-2 p-4 rounded-lg ${
-                index % 2 === 0 ? "bg-blue-100" : "bg-green-100"
-              }`}
+              className={`mb-4 p-4 rounded-lg transform transition-all duration-500 ease-in-out ${
+                index % 2 === 0 ? "bg-indigo-50" : "bg-teal-50"
+              } hover:scale-105 hover:shadow-xl hover:bg-indigo-100`}
+              style={{
+                animation: `fadeIn 0.5s ease-in-out ${index * 0.1}s forwards`,
+              }}
             >
-              <strong>{region.name}</strong>
-              <p>
+              <strong className="text-xl text-gray-900">{region.name}</strong>
+              <p className="text-gray-700">
                 Members:{" "}
                 {region.members.map((member) => member.name).join(", ")}
               </p>
-              <button
-                onClick={() => handleEdit(region)}
-                className="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 mr-2"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(region.id)}
-                className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600"
-              >
-                Delete
-              </button>
+              <div className="mt-2 flex gap-3">
+                <button
+                  onClick={() => handleEdit(region)}
+                  className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-gradient-to-r hover:from-yellow-500 hover:to-yellow-600 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl"
+                  >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(region.id)}
+                  className="bg-gradient-to-r from-red-400 to-red-500 text-white py-2 px-4 rounded-lg hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl"
+                  >
+                  Delete
+                </button>
+              </div>
             </li>
           ))}
         </ul>
       ) : (
-        <p>No regions available.</p>
+        <p className="text-gray-600">No regions available.</p>
       )}
 
       <button
         onClick={() => setShowForm(true)}
-        className="mt-4 bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600"
+        className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-all duration-300 ease-in-out"
       >
         Add Region
       </button>
 
       {showForm && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
-            <h2 className="text-xl font-bold mb-4">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-1/3 transform transition-all duration-300 ease-in-out scale-110">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
               {isEditing ? "Edit Region" : "Add New Region"}
             </h2>
             <form onSubmit={handleSubmit}>
@@ -143,7 +148,7 @@ const RegionComponent = () => {
                   id="name"
                   value={newRegionName}
                   onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   required
                 />
               </div>
@@ -157,7 +162,7 @@ const RegionComponent = () => {
                   multiple
                   value={selectedMembers}
                   onChange={handleMemberSelect}
-                  className="w-full p-2 border border-gray-300 rounded-md"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   required
                 >
                   {employees.map((employee) => (
@@ -172,13 +177,13 @@ const RegionComponent = () => {
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="bg-gray-500 text-white py-1 px-3 rounded hover:bg-gray-600 mr-2"
+                  className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 mr-2"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600"
+                  className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
                 >
                   {isEditing ? "Update Region" : "Create Region"}
                 </button>

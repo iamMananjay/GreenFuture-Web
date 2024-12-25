@@ -55,108 +55,108 @@ const Profile = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">User Profile</h1>
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex flex-col space-y-4">
+    <div className="container mx-auto p-6">
+      <h1 className="text-3xl font-semibold mb-6 text-center">User Profile</h1>
+      <div className="bg-white p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        <div className="space-y-6">
           <div>
-            <label className="block text-sm font-semibold">Name</label>
+            <label className="block text-sm font-semibold text-gray-700">Name</label>
             {isEditing ? (
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="mt-1 p-2 border border-gray-300 rounded"
+                className="mt-2 p-3 border border-gray-300 rounded-lg w-full"
               />
             ) : (
-              <p className="text-lg">{user.name}</p>
+              <p className="text-lg text-gray-800">{user.name}</p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-semibold">Email</label>
+            <label className="block text-sm font-semibold text-gray-700">Email</label>
             {isEditing ? (
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="mt-1 p-2 border border-gray-300 rounded"
+                className="mt-2 p-3 border border-gray-300 rounded-lg w-full"
               />
             ) : (
-              <p className="text-lg">{user.email}</p>
+              <p className="text-lg text-gray-800">{user.email}</p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-semibold">Role</label>
+            <label className="block text-sm font-semibold text-gray-700">Role</label>
             {isEditing ? (
               <input
                 type="text"
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
-                className="mt-1 p-2 border border-gray-300 rounded"
+                className="mt-2 p-3 border border-gray-300 rounded-lg w-full"
               />
             ) : (
-              <p className="text-lg">{user.role}</p>
+              <p className="text-lg text-gray-800">{user.role}</p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-semibold">Contact</label>
+            <label className="block text-sm font-semibold text-gray-700">Contact</label>
             {isEditing ? (
               <input
                 type="text"
                 name="contact"
                 value={formData.contact}
                 onChange={handleChange}
-                className="mt-1 p-2 border border-gray-300 rounded"
+                className="mt-2 p-3 border border-gray-300 rounded-lg w-full"
               />
             ) : (
-              <p className="text-lg">{user.contact}</p>
+              <p className="text-lg text-gray-800">{user.contact}</p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-semibold">Gender</label>
+            <label className="block text-sm font-semibold text-gray-700">Gender</label>
             {isEditing ? (
               <input
                 type="text"
                 name="gender"
                 value={formData.gender}
                 onChange={handleChange}
-                className="mt-1 p-2 border border-gray-300 rounded"
+                className="mt-2 p-3 border border-gray-300 rounded-lg w-full"
               />
             ) : (
-              <p className="text-lg">{user.gender}</p>
+              <p className="text-lg text-gray-800">{user.gender}</p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-semibold">Status</label>
+            <label className="block text-sm font-semibold text-gray-700">Status</label>
             {isEditing ? (
               <input
                 type="text"
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                className="mt-1 p-2 border border-gray-300 rounded"
+                className="mt-2 p-3 border border-gray-300 rounded-lg w-full"
               />
             ) : (
-              <p className="text-lg">{user.status}</p>
+              <p className="text-lg text-gray-800">{user.status}</p>
             )}
           </div>
         </div>
 
-        <div className="mt-6 flex space-x-4">
+        <div className="mt-8 flex justify-end space-x-6">
           {isEditing ? (
             <>
               <button
                 onClick={handleSave}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 Save Changes
               </button>
               <button
                 onClick={() => setIsEditing(false)}
-                className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
+                className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
               >
                 Cancel
               </button>
@@ -164,7 +164,7 @@ const Profile = () => {
           ) : (
             <button
               onClick={handleEdit}
-              className="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 mr-2"
+              className="px-6 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
             >
               Edit Profile
             </button>

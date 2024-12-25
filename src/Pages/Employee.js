@@ -6,9 +6,8 @@ import {
   deleteEmployee,
 } from "../services/employeeService";
 
-import {
-  fetchAllJobs // Assuming you have a service to fetch job designations
-} from "../services/JobService";
+import { fetchAllJobs } from "../services/JobService"; // Assuming you have a service to fetch job designations
+
 const Employee = () => {
   const [employees, setEmployees] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -175,13 +174,13 @@ const Employee = () => {
                   <button
                     onClick={() => handleEditEmployee(employee)}
                     className="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 mr-2"
-                    >
+                  >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDeleteEmployee(employee.id)}
                     className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600"
-                    >
+                  >
                     Delete
                   </button>
                 </div>
@@ -272,8 +271,7 @@ const Employee = () => {
                 <select
                   id="designationId"
                   name="designationId"
-                    value={editingEmployee ? editingEmployee.designation?.id || "" : newEmployee.designationId}
-
+                  value={editingEmployee ? editingEmployee.designation?.id || "" : newEmployee.designationId}
                   onChange={handleInputChange}
                   className="w-full p-2 border border-gray-300 rounded-md"
                 >

@@ -113,10 +113,10 @@ const Project = () => {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Projects</h1>
+    <div className="container mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6 text-gray-800">Projects</h1>
       <button
-        className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
+        className="bg-blue-600 text-white px-6 py-3 rounded-lg mb-6 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
         onClick={() => {
           setIsFormVisible(!isFormVisible);
           if (!isFormVisible) {
@@ -130,27 +130,27 @@ const Project = () => {
       </button>
 
       {isFormVisible && (
-        <div className="bg-gray-100 p-4 rounded shadow-md mb-6">
-          <h2 className="text-xl font-bold mb-4">
+        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+          <h2 className="text-2xl font-bold mb-4 text-gray-700">
             {editMode ? "Edit Project" : "Add New Project"}
           </h2>
           <div className="mb-4">
-            <label className="block mb-2 font-semibold">Project Name</label>
+            <label className="block text-gray-700 font-semibold mb-2">Project Name</label>
             <input
               type="text"
               name="name"
               value={newProject.name}
               onChange={handleInputChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="mb-4">
-            <label className="block mb-2 font-semibold">Team</label>
+            <label className="block text-gray-700 font-semibold mb-2">Team</label>
             <select
               name="team"
               value={newProject.team}
               onChange={handleInputChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select Team</option>
               {teams.map((team, index) => (
@@ -161,12 +161,12 @@ const Project = () => {
             </select>
           </div>
           <div className="mb-4">
-            <label className="block mb-2 font-semibold">Idea</label>
+            <label className="block text-gray-700 font-semibold mb-2">Idea</label>
             <select
               name="idea"
               value={newProject.idea}
               onChange={handleInputChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select Idea</option>
               {ideas.map((idea, index) => (
@@ -177,12 +177,12 @@ const Project = () => {
             </select>
           </div>
           <div className="mb-4">
-            <label className="block mb-2 font-semibold">Status</label>
+            <label className="block text-gray-700 font-semibold mb-2">Status</label>
             <select
               name="stage"
               value={newProject.stage}
               onChange={handleInputChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="Pending">Pending</option>
               <option value="Ongoing">Ongoing</option>
@@ -190,7 +190,7 @@ const Project = () => {
             </select>
           </div>
           <button
-            className="bg-green-500 text-white px-4 py-2 rounded"
+            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
             onClick={handleAddOrUpdateProject}
           >
             {editMode ? "Update Project" : "Submit"}
@@ -198,45 +198,43 @@ const Project = () => {
         </div>
       )}
 
-      <table className="w-full border-collapse border border-gray-300">
-        <thead>
-          <tr>
-            <th className="border border-gray-300 p-2">Name</th>
-            <th className="border border-gray-300 p-2">Team</th>
-            <th className="border border-gray-300 p-2">Idea</th>
-            <th className="border border-gray-300 p-2">Status</th>
-            <th className="border border-gray-300 p-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {projects.map((project) => (
-            <tr key={project.id}>
-              <td className="border border-gray-300 p-2">{project.name}</td>
-              <td className="border border-gray-300 p-2">
-                {project.team ? project.team.name : "No Team"}
-              </td>
-              <td className="border border-gray-300 p-2">
-                {project.idea ? project.idea.title : "No Idea"}
-              </td>
-              <td className="border border-gray-300 p-2">{project.stage}</td>
-              <td className="border border-gray-300 p-2">
-                <button
-                  className="bg-yellow-500 text-white px-4 py-2 rounded mr-2"
-                  onClick={() => handleEditProject(project)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="bg-red-500 text-white px-4 py-2 rounded"
-                  onClick={() => handleDeleteProject(project.id)}
-                >
-                  Delete
-                </button>
-              </td>
+      <div className="overflow-x-auto">
+        <table className="w-full table-auto border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="p-3 border border-gray-300">Name</th>
+              <th className="p-3 border border-gray-300">Team</th>
+              <th className="p-3 border border-gray-300">Idea</th>
+              <th className="p-3 border border-gray-300">Status</th>
+              <th className="p-3 border border-gray-300">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {projects.map((project) => (
+              <tr key={project.id} className="hover:bg-gray-50">
+                <td className="p-3 border border-gray-300">{project.name}</td>
+                <td className="p-3 border border-gray-300">{project.team?.name || "No Team"}</td>
+                <td className="p-3 border border-gray-300">{project.idea?.title || "No Idea"}</td>
+                <td className="p-3 border border-gray-300">{project.stage}</td>
+                <td className="p-3 border border-gray-300">
+                  <button
+                    className="bg-yellow-500 text-white px-4 py-2 rounded-lg mr-2 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    onClick={() => handleEditProject(project)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    onClick={() => handleDeleteProject(project.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
