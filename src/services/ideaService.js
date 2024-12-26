@@ -1,4 +1,5 @@
 import { IDEA_URL } from '../api/api';
+import axios from "axios";
 
 
 export const fetchIdeas = async () => {
@@ -160,5 +161,49 @@ export const downloadFile = async (ideaId, fileName) => {
     alert('There was an issue downloading the file');
   }
 };
+
+/**
+ * Fetch comments for a specific idea.
+ * @param {number} ideaId - The ID of the idea.
+ * @returns {Promise<Array>} - A promise that resolves to an array of comments.
+ */
+export const fetchComments = async (ideaId) => {
+  try {
+    const response = await axios.get(`${IDEA_URL}/${ideaId}/comments`);
+    return response.data; // Assuming the backend returns an array of comments
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+    throw error;
+  }
+};
+
+/**
+ * Add a new comment to a specific idea.
+ * @param {number} ideaId - The ID of the idea.
+ * @param {string} content - The content of the comment.
+ * @param {string} commentedBy - The email or name of the user adding the comment.
+ * @returns {Promise<Object>} - A promise that resolves to the added comment.
+ */
+export const addCommentToIdea = async (ideaId, content, commentedBy) => {
+  try {
+    // Send the data as query parameters
+    const response = await axios.post(
+      `${IDEA_URL}/${ideaId}/comments`,
+      null, // No request body since parameters are in the URL
+      {
+        params: {
+          content: content || '', // Ensure content is not undefined
+          commentedBy: commentedBy || '', // Ensure commentedBy is not undefined
+        },
+      }
+    );
+    return response.data; // Assuming the backend returns the added comment
+  } catch (error) {
+    console.error('Error adding comment:', error);
+    throw error;
+  }
+};
+
+
 
 

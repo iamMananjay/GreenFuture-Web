@@ -7,7 +7,9 @@ import {
   updateIdea,
   deleteIdea,
   voteOnIdea,
-  downloadFile
+  downloadFile,
+  fetchComments,
+  addCommentToIdea,
 } from '../services/ideaService';
 import { FaThumbsUp, FaThumbsDown, FaSpinner } from 'react-icons/fa';
 
@@ -24,6 +26,10 @@ const Idea = () => {
   const [error, setError] = useState(null);
   const [showAll, setShowAll] = useState(false);
   const [attachment, setAttachment] = useState(null);
+  const [showAddComment, setShowAddComment] = useState({});
+const [newCommentContent, setNewCommentContent] = useState({});
+const [showComments, setShowComments] = useState({});
+const [comments, setComments] = useState({});
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -162,6 +168,47 @@ const handleFormSubmit = async (e) => {
     downloadFile(ideaId, fileName);
   }; 
 
+  const toggleAddComment = (ideaId) => {
+    // Toggle the visibility of the "Add Comment" box for the specific idea
+    setShowAddComment((prev) => ({ ...prev, [ideaId]: !prev[ideaId] }));
+  };
+  
+  const toggleShowComments = async (ideaId) => {
+    try {
+      // Toggle the visibility of the comments section
+      setShowComments((prev) => ({ ...prev, [ideaId]: !prev[ideaId] }));
+  
+      // Fetch comments only if the comments section is being opened
+      if (!showComments[ideaId]) {
+        const fetchedComments = await fetchComments(ideaId); // Fetch comments from the backend
+        setComments((prev) => ({ ...prev, [ideaId]: fetchedComments }));
+      }
+    } catch (error) {
+      console.error(`Failed to fetch comments for idea ${ideaId}:`, error);
+      // Optionally, show an error message to the user
+    }
+  };
+  
+  const handleAddComment = async (ideaId) => {
+    const content = newCommentContent[ideaId];
+    if (!content.trim()) {
+      // Optional: Show a warning if the comment is empty or only whitespace
+      console.warn('Comment content cannot be empty.');
+      return;
+    }
+  
+    try {
+      await addCommentToIdea(ideaId, content,userEmail); // Add the comment to the backend
+      const updatedComments = await fetchComments(ideaId); // Fetch updated comments
+      setComments((prev) => ({ ...prev, [ideaId]: updatedComments }));
+      setNewCommentContent((prev) => ({ ...prev, [ideaId]: '' })); // Clear the input box
+    } catch (error) {
+      console.error(`Failed to add comment for idea ${ideaId}:`, error);
+      // Optionally, show an error message to the user
+    }
+  };
+  
+
 
   return (
     <div className="p-6">
@@ -213,69 +260,134 @@ const handleFormSubmit = async (e) => {
         </div>
       )}
 
-      {(showAll || filteredIdeas.length === 0) && !loading && (
-        <div className="space-y-4 mb-6 mt-4">
-          {ideas.map((idea) => (
-            <div key={idea.id} className="bg-white p-4 shadow-lg rounded-lg flex justify-between items-center transition-transform transform hover:scale-105">
-              <div>
-                <h4 className="text-xl font-bold">{idea.title}</h4>
-                <p>{idea.description}</p>
-                <p>Votes: {idea.voteCount}</p>
-                <p>Posted By: {idea.submittedBy}</p>
-                {idea.attachedFiles && idea.attachedFiles.length > 0 && (
-                  <div>
-                    {idea.attachedFiles.map((fileName, fileIndex) => (
-                      <div key={fileIndex} className="flex items-center space-x-2">
-                        <button
-                          onClick={() => handleDownloadFile(idea.id, fileName)} 
-                          className="text-blue-500"
-                        >
-                          Download {fileName}
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
+<div className="space-y-4 mb-6 mt-4">
+  {ideas.map((idea) => (
+    <div
+      key={idea.id}
+      className="bg-white p-4 shadow-lg rounded-lg flex flex-col space-y-4 transition-transform transform hover:scale-105"
+    >
+      <div>
+        <h4 className="text-xl font-bold">{idea.title}</h4>
+        <p>{idea.description}</p>
+        <p>Votes: {idea.voteCount}</p>
+        <p>Posted By: {idea.submittedBy}</p>
+        {idea.attachedFiles && idea.attachedFiles.length > 0 && (
+          <div>
+            {idea.attachedFiles.map((fileName, fileIndex) => (
+              <div key={fileIndex} className="flex items-center space-x-2">
+                <button
+                  onClick={() => handleDownloadFile(idea.id, fileName)}
+                  className="text-blue-500"
+                >
+                  Download {fileName}
+                </button>
               </div>
-              <div className="flex items-center space-x-2">
-                {idea.submittedBy !== userEmail && (
-                  <>
-                    {idea.votes.some(vote => vote.userEmail === userEmail) ? (
-                      <FaThumbsDown
-                        className="text-red-500 cursor-pointer"
-                        onClick={() => handleVote(idea.id, 'remove')}
-                        title="You have already voted"
-                      />
-                    ) : (
-                      <FaThumbsUp
-                        className="text-green-500 cursor-pointer"
-                        onClick={() => handleVote(idea.id, 'add')}
-                        title="Vote for this idea"
-                      />
-                    )}
-                  </>
-                )}
-                {idea.submittedBy === userEmail && (
-                  <>
-                    <button
-                      onClick={() => handleEdit(idea)}
-                      className="bg-yellow-500 text-white px-4 py-2 rounded-full hover:bg-yellow-600"
-                      >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(idea.id)}
-                      className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600"
-                      >
-                      Delete
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
+        )}
+      </div>
+      <div className="flex justify-between items-center">
+        {/* Left Side: Edit/Delete Buttons */}
+        <div className="flex items-center space-x-2">
+          {idea.submittedBy === userEmail && (
+            <>
+              <button
+                onClick={() => handleEdit(idea)}
+                className="bg-yellow-500 text-white px-4 py-2 rounded-full hover:bg-yellow-600"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDelete(idea.id)}
+                className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </>
+          )}
         </div>
-      )}
+
+        {/* Right Side: Thumbs Up/Down */}
+        <div className="flex items-center space-x-2">
+          {idea.submittedBy !== userEmail && (
+            <>
+              {idea.votes.some((vote) => vote.userEmail === userEmail) ? (
+                <FaThumbsDown
+                  className="text-red-500 cursor-pointer"
+                  onClick={() => handleVote(idea.id, 'remove')}
+                  title="You have already voted"
+                />
+              ) : (
+                <FaThumbsUp
+                  className="text-green-500 cursor-pointer"
+                  onClick={() => handleVote(idea.id, 'add')}
+                  title="Vote for this idea"
+                />
+              )}
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Comments Section */}
+      <div>
+        <button
+          onClick={() => toggleAddComment(idea.id)}
+          className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600"
+        >
+          {showAddComment[idea.id] ? 'Close Add Comment' : 'Add Comment'}
+        </button>
+        <button
+          onClick={() => toggleShowComments(idea.id)}
+          className="bg-gray-500 text-white px-4 py-2 rounded-full hover:bg-gray-600 ml-2"
+        >
+          {showComments[idea.id] ? 'Close Comments' : 'Show Comments'}
+        </button>
+
+        {/* Add Comment Box */}
+        {showAddComment[idea.id] && (
+          <div className="mt-4">
+            <textarea
+              className="w-full p-2 border rounded"
+              placeholder="Write your comment..."
+              value={newCommentContent[idea.id] || ''}
+              onChange={(e) =>
+                setNewCommentContent({
+                  ...newCommentContent,
+                  [idea.id]: e.target.value,
+                })
+              }
+            />
+            <button
+              onClick={() => handleAddComment(idea.id)}
+              className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 mt-2"
+            >
+              Submit Comment
+            </button>
+          </div>
+        )}
+
+        {/* Show Comments List */}
+        {showComments[idea.id] && (
+          <div className="mt-4 space-y-2">
+            {comments[idea.id]?.map((comment) => (
+              <div
+                key={comment.id}
+                className="bg-gray-100 p-2 rounded shadow-sm"
+              >
+                <p className="font-bold">{comment.commentedBy}</p>
+                <p>{comment.content}</p>
+                <p className="text-sm text-gray-500">
+                  {new Date(comment.commentedAt).toLocaleString()}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  ))}
+</div>
 
 {showForm && (
   <form

@@ -90,7 +90,7 @@ const Incentive = () => {
   return (
     <div className="p-6 ">
       {/* Header */}
-      <h1 className="text-3xl font-semibold mb-6  text-indigo-800">Incentive Management</h1>
+      <h1 className="text-3xl font-semibold mb-6  ">Incentive Management</h1>
       
       {/* Add New Incentive Button */}
       <div className="mb-6">
