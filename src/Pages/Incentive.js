@@ -88,15 +88,15 @@ const Incentive = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 ">
       {/* Header */}
-      <h1 className="text-3xl font-semibold mb-6 text-center text-indigo-800">Incentive Management</h1>
+      <h1 className="text-3xl font-semibold mb-6  text-indigo-800">Incentive Management</h1>
       
       {/* Add New Incentive Button */}
       <div className="mb-6">
         <button
-          className="bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-indigo-700 transition-all"
-          onClick={() => {
+        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-all duration-300 ease-in-out"
+        onClick={() => {
             setIsFormVisible(!isFormVisible);
             setEditMode(false); 
           }}
@@ -150,8 +150,8 @@ const Incentive = () => {
             </select>
           </div>
           <button
-            className="bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-indigo-700 transition-all w-full"
-            onClick={handleAddIncentive}
+        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-all duration-300 ease-in-out"
+        onClick={handleAddIncentive}
           >
             {selectedIncentive ? "Update Incentive" : "Add Incentive"}
           </button>
@@ -159,9 +159,9 @@ const Incentive = () => {
       )}
 
       {/* Incentives Table */}
-      <div className="overflow-x-auto bg-white p-4 rounded-lg shadow-md">
-        <table className="w-full table-auto border-collapse border border-gray-300">
-          <thead className="bg-blue-500 text-white">
+      <div >
+      <table className="table-auto w-full border-collapse border border-gray-200 mt-4 rounded-lg">
+      <thead >
             <tr>
               <th className="border border-gray-300 p-3 text-left">ID</th>
               <th className="border border-gray-300 p-3 text-left">Incentive Type</th>

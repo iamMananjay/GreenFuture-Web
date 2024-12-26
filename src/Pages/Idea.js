@@ -133,26 +133,32 @@ const Idea = () => {
       console.error('Error voting on idea:', error);
     }
   };
+  const role = localStorage.getItem('role');
+
 
   return (
     <div className="p-6">
       <h3 className="text-2xl font-semibold mb-4">Ideas</h3>
+      {role !== "Employee" ? (
+  <>
+    <button
+      onClick={filterTopIdeas}
+      className="bg-green-600 text-white p-2 rounded-md mt-4 hover:bg-green-700 transition"
+    >
+      Filter Top Ideas (AI)
+    </button>
 
+    {filteredIdeas.length > 0 && !loading && (
       <button
-        onClick={filterTopIdeas}
-        className="bg-green-600 text-white p-2 rounded-md mt-4 hover:bg-green-700 transition"
+        onClick={showAllIdeas}
+        className="bg-blue-600 text-white p-2 rounded-md mt-4 hover:bg-blue-700 transition"
       >
-        Filter Top Ideas (AI)
+        Show All Ideas
       </button>
+    )}
+  </>
+) : null}
 
-      {filteredIdeas.length > 0 && !loading && (
-        <button
-          onClick={showAllIdeas}
-          className="bg-blue-600 text-white p-2 rounded-md mt-4 hover:bg-blue-700 transition"
-        >
-          Show All Ideas
-        </button>
-      )}
 
       {loading && (
         <div className="flex justify-center items-center mt-4">
@@ -212,14 +218,14 @@ const Idea = () => {
                   <>
                     <button
                       onClick={() => handleEdit(idea)}
-                      className="text-blue-500 hover:underline"
-                    >
+                      className="bg-yellow-500 text-white px-4 py-2 rounded-full hover:bg-yellow-600"
+                      >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(idea.id)}
-                      className="text-red-500 hover:underline"
-                    >
+                      className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600"
+                      >
                       Delete
                     </button>
                   </>
