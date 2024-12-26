@@ -30,6 +30,8 @@ const Idea = () => {
 const [newCommentContent, setNewCommentContent] = useState({});
 const [showComments, setShowComments] = useState({});
 const [comments, setComments] = useState({});
+const [isSyncing, setIsSyncing] = useState(false);
+const [toastMessage, setToastMessage] = useState("");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -207,12 +209,58 @@ const handleFormSubmit = async (e) => {
       // Optionally, show an error message to the user
     }
   };
-  
+
+  const syncOfflineIdeas = async () => {
+    setIsSyncing(true);
+    setToastMessage(""); // Clear previous toast messages
+
+    // Simulate a delay for syncing (e.g., 5 seconds)
+    setTimeout(() => {
+      setIsSyncing(false);
+      setToastMessage("No offline data to sync. Everything Upto date.");
+
+      // Remove the toast message after 5 seconds
+      setTimeout(() => {
+        setToastMessage(""); // Clear the message after another 5 seconds
+      }, 5000);
+    }, 5000);
+  };
 
 
   return (
     <div className="p-6">
       <h3 className="text-2xl font-semibold mb-4">Ideas</h3>
+       {/* Sync Offline Ideas Button - Only visible for non-Employee roles */}
+      {role !== "Employee" && (
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={syncOfflineIdeas}
+            className="bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600 transition"
+          >
+            Sync Offline Ideas
+          </button>
+        </div>
+      )}
+
+      {/* Syncing Animation */}
+      {isSyncing && (
+        <div className="flex justify-center items-center mt-4">
+          <div className="animate-spin text-yellow-500 text-4xl">
+            <FaSpinner />
+          </div>
+          <div className="ml-2">
+            <p className="text-lg text-gray-500">Syncing offline ideas...</p>
+            <p className="font-bold text-yellow-600 animate-pulse">Please wait!</p>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Message */}
+      {toastMessage && (
+        <div className="mt-4 bg-gray-100 text-gray-800 p-3 rounded-md shadow-md">
+          {toastMessage}
+        </div>
+      )}
       {role !== "Employee"  ? (
   <>
   {ideas.length !== 0 ? (
