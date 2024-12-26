@@ -72,25 +72,20 @@ export const checkUserVote = async (ideaId, userEmail) => {
     throw error;
   }
 };
-
-
-// // Update an existing idea
-export const updateIdea = async (ideaId, updatedData) => {
-  try {
+export const updateIdea = async (ideaId, formData, token) => {
+  console.log(ideaId, formData, token);
     const response = await fetch(`${IDEA_URL}/${ideaId}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify(updatedData),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to update idea');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error('Error updating idea:', error);
-    throw error;
+      body: formData, // The formData will automatically set the correct Content-Type
+  });
+
+  if (response.ok) {
+      const result = await response.json();
+  } else {
+      console.error('Error updating idea');
   }
 };
 
@@ -101,7 +96,8 @@ export const deleteIdea = async (ideaId) => {
       method: 'DELETE',
     });
     if (!response.ok) {
-      throw new Error('Failed to delete idea');
+      const errorData = await response.json(); // Parse JSON response
+      throw new Error(errorData.message || "Failed to delete idea");
     }
     return { message: 'Idea deleted successfully' };
   } catch (error) {
@@ -110,26 +106,58 @@ export const deleteIdea = async (ideaId) => {
   }
 };
 
-
-export const submitIdea = async (ideaData, token) => {
-  try {
-    const response = await fetch(IDEA_URL, {
+export const submitIdea = async (formData, token) => {
+  const response = await fetch(IDEA_URL, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify(ideaData)
+      body: formData, // The formData will automatically set the correct Content-Type
+  });
+
+  if (response.ok) {
+      const result = await response.json();
+      console.log('Idea submitted successfully', result);
+  } else {
+      console.error('Error submitting idea');
+  }
+};
+
+// fileService.js
+
+// Function to handle downloading the file
+export const downloadFile = async (ideaId, fileName) => {
+  try {
+    // Construct the URL for the file
+    const fileUrl = `${IDEA_URL}/${ideaId}/files/${fileName}`;
+
+    // Fetch the file from the backend
+    const response = await fetch(fileUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
 
     if (!response.ok) {
-      throw new Error('Failed to submit idea');
+      throw new Error('File download failed');
     }
 
-    return await response.json();
+    // Convert the response into a Blob object
+    const blob = await response.blob();
+
+    // Create an object URL for the Blob and trigger a download
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName; // The name the file will have when downloaded
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url); // Clean up the object URL after the download
   } catch (error) {
-    console.error('Error submitting idea:', error);
-    throw error;
+    console.error('Download error:', error);
+    alert('There was an issue downloading the file');
   }
 };
 

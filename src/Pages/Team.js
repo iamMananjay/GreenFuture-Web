@@ -118,6 +118,7 @@ const TeamForm = () => {
     const chatUrl = `https://tawk.to/`;
     window.open(chatUrl, "_blank");
   };
+  const role = localStorage.getItem('role');
 
   return (
     <div className="p-4 bg-gray-50 min-h-screen">
@@ -154,22 +155,27 @@ const TeamForm = () => {
                     Members: {team.members.map((member) => member.name).join(", ")}
                   </p>
                   <div className="mt-4 flex space-x-4">
-                    <button
-                      onClick={() => handleEditClick(team)}
-                      className="bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600 transition-all"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteClick(team.id)}
-                      className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-all"
-                    >
-                      Delete
-                    </button>
-                    <button
-                      onClick={() => handleVideoClick(team.name)}
-                      className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-all"
-                    >
+                  {role !== "Employee" ? (
+                        <>
+                          <button
+                            onClick={() => handleEditClick(team)}  // Trigger edit handler when clicked
+                            className="bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600 transition-all"
+                          >
+                            Edit
+                          </button>
+                          {/* Delete Button */}
+                          <button
+                            onClick={() => handleDeleteClick(team.id)}  // Trigger delete handler with team ID
+                            className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-all"
+                          >
+                            Delete
+                          </button>
+                        </>
+                      ) : null}
+                      <button
+                        onClick={() => handleVideoClick(team.name)}
+                        className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-all"
+                      >
                       <FaVideo className="inline mr-2" />
                       Video Call
                     </button>
